@@ -5,7 +5,7 @@
  
 ※本ドキュメントは原文（readme.md）を日本語訳したものです。
 
-このリポジトリに含まれるスクリプトはLIDC-IDRIデータの変換に利用できます。このスクリプトをコールすれば、画像および領域分割データがnifti/nrrd形式で、結節の画像所見はシングルカンマ区切り（CSV）形式で利用できるようになります。
+このリポジトリに含まれるスクリプトはLIDC-IDRIデータの変換に利用できます。このスクリプトをコールすれば、画像および領域分割データがnifti/nrrd形式で、結節の所見はシングルカンマ区切り（CSV）形式で利用できるようになります。
 
 論文でこのスクリプトを利用した場合には、下記の引用を記載願います。
 
@@ -17,50 +17,42 @@ Michael Goetz, "MIC-DKFZ/LIDC-IDRI-processing: Release 1.0.1", DOI: 10.5281/zeno
 これらの使用のため、MITKのビルドおよび分類モジュールの有効化で入手するか、必要なすべてのコマンドラインツールを含んだ[MITK Phenotyping](http://mitk.org/Phenotyping)のインストールをしてください。
 
 ## 基本的な使用方法
- * Download the data from the [LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI) website. Required are the Image DICOM files and the the describing XML files (Radiologist Annotations/Segmentations (XML format)). When you download the data using the NBIA Data Retrriever, select the "Classic Directory Name" option instead of the default option "Descriptive Directory Name".
- * If not already happend, build or download and install [MITK Phenotyping](http://mitk.org/Phenotyping)
- * Adapt the paths in the file "lidc_data_to_nifti.py"
- * Run the script "lidc_data_to_nifti.py"
+ * [LIDC-IDRI](https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI) のウェブサイトからデータをダウンロードしてください。画像データとしてDICOMファイルと説明データとしてXMLファイル（放射線科医のアノテーションおよび領域分割（XML形式）データ）が必要になります。NBIAデータ検索を利用してデータをダウンロードする際、デフォルトの"Descriptive Directory Name"オプションではなく、"Classic Directory Name"オプションを選択してください。
+ * [MITK Phenotyping](http://mitk.org/Phenotyping)をビルドするか、ダウンロードおよびインストールをしてください。
+ * "lidc_data_to_nifti.py"のファイル中に記載されたパスを登録してください。
+ * "lidc_data_to_nifti.py"のスクリプトを実行してください。
  
-Following input paths needs to be defined: 
- * path_to_executables : Path where the command line tool from MITK Phenotyping can be found
- * path_to_dicoms : Folder which contains the DICOM image files (not the segmentation dicoms)
- * path_to_xmls : Folder that contains the XML which describes the nodules
-Following output paths needs to be defined: 
- * path_to_nrrds : Folder that will contain the created Nrrd / Nifti Files
- * path_to_planars :Folder that will contain the Planar figure for each subject
- * path_to_characteristics : Path to a CSV File, where the characteristic of a nodule will be stored. If the file exists, the new content will be appended. 
- * path_to_error_file : Path to an error file where error messages are written to. Existing files will be appended.
+下記の通り、入力パスを定義する必要があります：
+ * path_to_executables : MITK Phenotypingのコマンドラインツールへのパス
+ * path_to_dicoms : DICOM画像ファイル（領域分割のDICOMファイルではなく）が含まれるフォルダ
+ * path_to_xmls : 結節について記載されたXMLを含むフォルダ
 
-## Output / Result
+下記の通り、出力パスを定義する必要があります：
+ * path_to_nrrds : NrrdもしくはNiftiファイルの出力先のフォルダ
+ * path_to_planars :各検査の平面画像の出力先フォルダ
+ * path_to_characteristics : CSVファイルへのパス。結節の所見が記憶されます。すでにファイルが存在する場合には、追記されます。
+ * path_to_error_file : エラーメッセージが出力されるエラーファイルへのパス。すでにファイルが存在する場合には、追記されます。
 
-The output created of this script consists of Nrrd-Files containing a whole DICOM Series (i.e. an 
-complete 3D CT image), Nifti (.nii.gz) files of the Nodule-Segmentations (3D), Nrrd and Planar 
-Figures (.pf) containing slice-wise segmentations of Nodules.
+## 出力結果
 
-The data are stored in subfolders, indicating the <Patient ID>. The 5 sign <Patient ID> matches the 
-numerical part of the Patient ID that is used in the LIDC_IDRI Dicom folder. However, since 
-some patients come with more than one CT image, the <Patient ID> is appended a single letter,
-so that each CT scan has an unique <Patient ID>. For example, the folder "LIDC_IDRI-0129" may contain 
-two CT images, which will then have the <Patient ID> "0129a" and "0129b".
+本スクリプトで生成される出力結果は、DICOMシリーズ全体（例：完全な３次元CT画像データ）を含んだNrrdファイルと、結節の3次元領域分割データのNifti (.nii.gz)ファイルと、結節の領域分割されたスライスを含んだNrrdおよび平面画像（.pf）から構成されます。
 
-There are up to four reader sessions given for each patient and image. <Session ID> is a 1-sign number indicating 
-the rang of expert FOR THE GIVEN IMAGE. According to the corresponding publication, each session 
-was done by one of 12 experts. However, it is not possible to ensure that two images where 
-annotated by the same expert. Therefore, two images might be annotated by different experts even 
-if they have the same <Session ID>
+これらデータは<患者ID>ごとに分けてサブフォルダに記憶されます。<患者ID>の5文字はLIDC_IDRI Dicomフォルダ内で利用される患者IDの数字部分と合致しています。ただし、何名かの患者は１つ以上のCT画像を含む場合があるため、<患者ID>に1文字追記されます。したがって、各CTスキャンはユニークな<患者ID>となっています。例えば、フォルダ"LIDC_IDRI-0129" は、２つのCT画像を含んでいる場合、<患者ID>は"0129a"と"0129b"のようになります。
 
-Each combination of Nodule and Expert has an unique 8-digit <Nodule ID>, for example 0000358. This ID is unique between all
-created segmentations of nodules and experts. This means that two segmentations of the 
-same Nodule will have different <Nodule ID>s. In contrast to this, the 8-digit <True Nodule ID> is the 
-same for all segmentations of the same nodule. It is defined as the minimum <Nodule ID> of all 
-segmentations of a given Nodule.
+各患者と画像に対して最大４つの読影セッションがあります。
+<セッションID>は、与えられた画像に対する専門家の範囲を示す1文字の数字になります。論文によれば、各セッションは12名の専門家のうち1名によって行われています。しかし、同じ専門家がアノテーションした２つの画像が必ず確保されている可能性はありません。
+したがって、２つの画像は場合によっては、同じ＜セッションID＞であっても、異なる専門家によってアノテーションされている可能性があります。
 
-The <ROI ID> is an id, which is unique within a set of Planar Figures or 2D Segmentations 
-of a single nodule. It is used to differenciate multiple planes of segmentations of the same object.
- 
-Based on these definitions, the following files are created:
- * path_to_nrrds/<Patient ID>/<Patient_ID>_ct_scan.nrrd : A nrrd file containing the 3D ct image
+結節と専門家の各組み合わせは、例えば0000358のように8文字のユニークな数字＜結節ID＞で表されます。
+このIDは全ての結節の領域分割および専門家の組み合わせに対してユニークとなっています。
+すなわち、同じ結節の２つの領域分割は異なる＜結節ID＞を持つことを意味します。
+これに対し、8文字の数字で表された＜正結節ID＞は同じ結節に対する全ての領域分割で同一となっています。
+これは、与えられた結節の全ての領域分割の＜結節ID＞の最小値となるように定義されています。
+
+＜ROI ID＞はある一つの結節の2次元領域分割か正面画像の中でユニークなIDとなっています。これは、同じ対象物の領域分割にて異なる複数の断面を区別するために使われます。
+
+これら定義に基づき、下記のようなファイルが生成されます:
+ * `path_to_nrrds/<Patient ID>/<Patient_ID>_ct_scan.nrrd` : 3DCT画像を含むnrrdファイル
  * path_to_nrrds/<Patient ID>/<Patient_ID>_<Session ID>_<Nodule ID>_<True Nodule ID>.nii.gz : Nifti files containing the segmentation of nodules
  * path_to_nrrds/<Patient ID>/planar_masks/<Patient_ID>_<Session ID>_<Nodule ID>_<ROI ID>.nrrd : Nrrd-Files containing a single plane of the Nodule Segmentations
  * path_to_planars/<Patient ID>/<Patient_ID>_<Session ID>_<Nodule ID>_<ROI ID>.pf : Planar Figure-Files containing a single plane of the Nodule Segmentations
