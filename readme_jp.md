@@ -53,14 +53,13 @@ Michael Goetz, "MIC-DKFZ/LIDC-IDRI-processing: Release 1.0.1", DOI: 10.5281/zeno
 
 これら定義に基づき、下記のようなファイルが生成されます:
  * `path_to_nrrds/<Patient ID>/<Patient_ID>_ct_scan.nrrd` : 3DCT画像を含むnrrdファイル
- * path_to_nrrds/<Patient ID>/<Patient_ID>_<Session ID>_<Nodule ID>_<True Nodule ID>.nii.gz : Nifti files containing the segmentation of nodules
- * path_to_nrrds/<Patient ID>/planar_masks/<Patient_ID>_<Session ID>_<Nodule ID>_<ROI ID>.nrrd : Nrrd-Files containing a single plane of the Nodule Segmentations
- * path_to_planars/<Patient ID>/<Patient_ID>_<Session ID>_<Nodule ID>_<ROI ID>.pf : Planar Figure-Files containing a single plane of the Nodule Segmentations
+ * `path_to_nrrds/<Patient ID>/<Patient_ID>_<Session ID>_<Nodule ID>_<True Nodule ID>.nii.gz` : 結節の領域分割を含んだNiftiファイル
+ * `path_to_nrrds/<Patient ID>/planar_masks/<Patient_ID>_<Session ID>_<Nodule ID>_<ROI ID>.nrrd `: 結節の領域分割のある一断面を含んだNrrdファイル
+ * `path_to_planars/<Patient ID>/<Patient_ID>_<Session ID>_<Nodule ID>_<ROI ID>.pf` : 結節の領域分割のある一断面を含んだ正面画像ファイル
 
-In addition, the characteristic of the nodules are saved in the file specified in path_to_characteristics
-and errors occuring during the whole process are recorded in path_to_error_file
+補足として、結節の所見は出力パスpath_to_characteristicsで指定されたファイル内に記録されます。同様に全体処理の中でエラーが起きた場合は、同様にpath_to_error_fileで指定されたファイルへ書き出されます。
  
-## Limitations
+## 注意事項
 The script had been developed using windows. It should be possible to execute it using linux, however this had never
 been tested. Problems may be caused by the subprocess calls (calling the executables of MITK Phenotyping).
 
